@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Comparison</title>
+    <title>CS 180 Project 1</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,6 +12,7 @@
             font-size: 24px;
             margin-top: 20px;
             margin-bottom: 10px;
+            text-align: center;
         }
         .image-row {
             display: flex;
@@ -36,10 +37,10 @@
 </head>
 <body>
 
-    <h3>Images of the Russian Empire:
-    Colorizing the Prokudin-Gorskii photo collection</h3>
-
-    <p>Josh Barua</p>
+    <h3 style="text-align: center;">Images of the Russian Empire:
+        Colorizing the Prokudin-Gorskii photo collection</h3>
+    
+    <h4 style="text-align: center;">Josh Barua</h4>
 
     <div class="section-title">Overview</div>
     <p>Sergei Mikhailovich Prokudin-Gorskii traveled across the vast Russian Empire taking photographs of everything he saw. He recorded three exposures of every scene onto a glass plate using a red, a green, and a blue filter. The goal of this project is to automatically colorize the photos by stacking and aligning images from each color channel.</p>
@@ -50,19 +51,28 @@
     <p><b>Base Image:</b> I used the blue channel as the base image and try to align red and green channel to it.</p>
 
     <div class="section-title">Bells and Whistles</div>
-    <p><b>Sobel Edge Detection:</b> While the base methods worked well for most images, I found that certain images like "emir.tif" were difficult to align with objectives that relied on RGB values. Instead of computing SSD on the RGB values directly, I preprocessed the images using a sobel edge detection filter and computed SSD on the processed images. This led to noticeable improvements visualized below.</p>
+    <p><b>Sobel Edge Detection:</b> While the base methods worked well for most images, I found that certain images like "emir.tif" were difficult to align with the objective function if I used RGB values as input. Instead of computing SSD on the RGB values of the image directly, I preprocessed the images using a sobel edge detection filter and computed SSD on the filtered image. This led to noticeable improvements visualized below.</p>
 
     <div class="section-title">Results</div>
+
+    <div class="image-row">
+        <div>
+            <h3>Base Algorithm</h3>
+        </div>
+        <div>
+            <h3>Base Algorithm + Sobel Edge Detection Filter</h3>
+        </div>
+    </div>
 
     <div class="small-title">cathedral.jpg</div>
 
     <div class="image-row">
         <div>
-            <img src="media/color_False_cathedral.jpg" alt="Image 1" width="200" height="200">
+            <img src="media/color_False_cathedral.jpg" alt="Image 1" width="500" height="500">
             <div class="image-caption">R: [12,3] G: [5,2]</div>
         </div>
         <div>
-            <img src="media/color_True_cathedral.jpg" alt="Image 2" width="200" height="200">
+            <img src="media/color_True_cathedral.jpg" alt="Image 2" width="500" height="500">
             <div class="image-caption">R: [12,3] G: [5,2]</div>
         </div>
     </div>
@@ -71,11 +81,11 @@
 
     <div class="image-row">
         <div>
-            <img src="media/color_False_monastery.jpg" alt="Image 1" width="200" height="200">
+            <img src="media/color_False_monastery.jpg" alt="Image 1" width="500" height="500">
             <div class="image-caption">R: [3,2] G: [-3,2]</div>
         </div>
         <div>
-            <img src="media/color_True_monastery.jpg" alt="Image 2" width="200" height="200">
+            <img src="media/color_True_monastery.jpg" alt="Image 2" width="500" height="500">
             <div class="image-caption">R: [3,2] G: [-3,2]</div>
         </div>
     </div>
@@ -84,11 +94,11 @@
 
     <div class="image-row">
         <div>
-            <img src="media/color_False_tobolsk.jpg" alt="Image 1" width="200" height="200">
+            <img src="media/color_False_tobolsk.jpg" alt="Image 1" width="500" height="500">
             <div class="image-caption">R: [6,3] G: [3,2]</div>
         </div>
         <div>
-            <img src="media/color_True_tobolsk.jpg" alt="Image 2" width="200" height="200">
+            <img src="media/color_True_tobolsk.jpg" alt="Image 2" width="500" height="500">
             <div class="image-caption">R: [6,3] G: [3,2]</div>
         </div>
     </div>
@@ -97,11 +107,11 @@
 
     <div class="image-row">
         <div>
-            <img src="media/color_False_church.jpg" alt="Image 1" width="200" height="200">
+            <img src="media/color_False_church.jpg" alt="Image 1" width="500" height="500">
             <div class="image-caption">R: [58,-4] G: [25,3]</div>
         </div>
         <div>
-            <img src="media/color_True_church.jpg" alt="Image 2" width="200" height="200">
+            <img src="media/color_True_church.jpg" alt="Image 2" width="500" height="500">
             <div class="image-caption">R: [58,-4] G: [25,3]</div>
         </div>
     </div>
@@ -110,11 +120,11 @@
 
     <div class="image-row">
         <div>
-            <img src="media/color_False_emir.jpg" alt="Image 1" width="200" height="200">
+            <img src="media/color_False_emir.jpg" alt="Image 1" width="500" height="500">
             <div class="image-caption">R: [107,17] G: [-3,7]</div>
         </div>
         <div>
-            <img src="media/color_True_emir.jpg" alt="Image 2" width="200" height="200">
+            <img src="media/color_True_emir.jpg" alt="Image 2" width="500" height="500">
             <div class="image-caption">R: [110,47] G: [49,24]</div>
         </div>
     </div>
@@ -123,11 +133,11 @@
 
     <div class="image-row">
         <div>
-            <img src="media/color_False_harvesters.jpg" alt="Image 1" width="200" height="200">
+            <img src="media/color_False_harvesters.jpg" alt="Image 1" width="500" height="500">
             <div class="image-caption">R: [120,7] G: [118,-3]</div>
         </div>
         <div>
-            <img src="media/color_True_harvesters.jpg" alt="Image 2" width="200" height="200">
+            <img src="media/color_True_harvesters.jpg" alt="Image 2" width="500" height="500">
             <div class="image-caption">R: [123,13] G: [61,14]</div>
         </div>
     </div>
@@ -136,11 +146,11 @@
 
     <div class="image-row">
         <div>
-            <img src="media/color_False_icon.jpg" alt="Image 1" width="200" height="200">
+            <img src="media/color_False_icon.jpg" alt="Image 1" width="500" height="500">
             <div class="image-caption">R: [89,22] G: [42,16]</div>
         </div>
         <div>
-            <img src="media/color_True_icon.jpg" alt="Image 2" width="200" height="200">
+            <img src="media/color_True_icon.jpg" alt="Image 2" width="500" height="500">
             <div class="image-caption">R: [88,23] G: [39,16]</div>
         </div>
     </div>
@@ -149,11 +159,11 @@
 
     <div class="image-row">
         <div>
-            <img src="media/color_False_lady.jpg" alt="Image 1" width="200" height="200">
+            <img src="media/color_False_lady.jpg" alt="Image 1" width="500" height="500">
             <div class="image-caption">R: [123,-17] G: [57,-6]</div>
         </div>
         <div>
-            <img src="media/color_True_lady.jpg" alt="Image 2" width="200" height="200">
+            <img src="media/color_True_lady.jpg" alt="Image 2" width="500" height="500">
             <div class="image-caption">R: [121,13] G: [57,9]</div>
         </div>
     </div>
@@ -162,11 +172,11 @@
 
     <div class="image-row">
         <div>
-            <img src="media/color_False_melons.jpg" alt="Image 1" width="200" height="200">
+            <img src="media/color_False_melons.jpg" alt="Image 1" width="500" height="500">
             <div class="image-caption">R: [176,7] G: [83,4]</div>
         </div>
         <div>
-            <img src="media/color_True_melons.jpg" alt="Image 2" width="200" height="200">
+            <img src="media/color_True_melons.jpg" alt="Image 2" width="500" height="500">
             <div class="image-caption">R: [176,14] G: [77,5]</div>
         </div>
     </div>
@@ -175,11 +185,11 @@
 
     <div class="image-row">
         <div>
-            <img src="media/color_False_onion_church.jpg" alt="Image 1" width="200" height="200">
+            <img src="media/color_False_onion_church.jpg" alt="Image 1" width="500" height="500">
             <div class="image-caption">R: [108,0] G: [52,22]</div>
         </div>
         <div>
-            <img src="media/color_True_onion_church.jpg" alt="Image 2" width="200" height="200">
+            <img src="media/color_True_onion_church.jpg" alt="Image 2" width="500" height="500">
             <div class="image-caption">R: [108,35] G: [53,23]</div>
         </div>
     </div>
@@ -188,11 +198,11 @@
 
     <div class="image-row">
         <div>
-            <img src="media/color_False_sculpture.jpg" alt="Image 1" width="200" height="200">
+            <img src="media/color_False_sculpture.jpg" alt="Image 1" width="500" height="500">
             <div class="image-caption">R: [140,-26] G: [33,-11]</div>
         </div>
         <div>
-            <img src="media/color_True_sculpture.jpg" alt="Image 2" width="200" height="200">
+            <img src="media/color_True_sculpture.jpg" alt="Image 2" width="500" height="500">
             <div class="image-caption">R: [140,-26] G: [33,-11]</div>
         </div>
     </div>
