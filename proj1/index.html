@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Comparison</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .section-title {
+            font-size: 24px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .image-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .image-row div {
+            margin: 0 10px;
+        }
+        .image-caption {
+            font-size: 14px;
+            margin-top: 5px;
+            text-align: center;
+        }
+        .small-title {
+            font-size: 16px;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h3>Images of the Russian Empire:
+    Colorizing the Prokudin-Gorskii photo collection</h3>
+
+    <p>Josh Barua</p>
+
+    <div class="section-title">Overview</div>
+    <p>Sergei Mikhailovich Prokudin-Gorskii traveled across the vast Russian Empire taking photographs of everything he saw. He recorded three exposures of every scene onto a glass plate using a red, a green, and a blue filter. The goal of this project is to automatically colorize the photos by stacking and aligning images from each color channel.</p>
+
+    <div class="section-title">Methods</div>
+    <p><b>Naive Approach:</b> To colorize the photos we need to first find an optimal alignment between different color channels. I experimented with two different objectives for determining the optimal displacement: normalized cross-correlation (NCC) and sum of squared difference (SSD). I observed similar results using both methods, but found SSD to be faster and selected it as my chosen objective. A naive approach to finding the optimal shift is to perform an exhaustive search over [-16,16] pixels on the x and y axis. This works well for smaller images but becomes computationally expensive for large ones.</p>
+    <p><b>Image Pyramid:</b> To address this problem, I constructed an image pyramid on the principle that downsampling images and computing alignments on coarse images create good approximations that only need to be refined as the image is upsampled. I used an iterative approach that first downsamples all the images by a factor of 2 at each step until the pyramid has a height of 4 or the image is smaller than 400x400 pixels. While upsampling, I recompute the alignment at each level on a search window that is half as large (i.e. 4th level is [-16,16], 3rd level is [-8,8], etc.). I add the computed shift at each level to 2 global variables that keep track of total dx and dy displacement, multiplying by 2 to account for the number of pixels doubling when upsampling.</p>
+    <p><b>Base Image:</b> I used the blue channel as the base image and try to align red and green channel to it.</p>
+
+    <div class="section-title">Bells and Whistles</div>
+    <p><b>Sobel Edge Detection:</b> While the base methods worked well for most images, I found that certain images like "emir.tif" were difficult to align with objectives that relied on RGB values. Instead of computing SSD on the RGB values directly, I preprocessed the images using a sobel edge detection filter and computed SSD on the processed images. This led to noticeable improvements visualized below.</p>
+
+    <div class="section-title">Results</div>
+
+    <div class="small-title">cathedral.jpg</div>
+
+    <div class="image-row">
+        <div>
+            <img src="media/color_False_cathedral.jpg" alt="Image 1" width="200" height="200">
+            <div class="image-caption">R: [12,3] G: [5,2]</div>
+        </div>
+        <div>
+            <img src="media/color_True_cathedral.jpg" alt="Image 2" width="200" height="200">
+            <div class="image-caption">R: [12,3] G: [5,2]</div>
+        </div>
+    </div>
+
+    <div class="small-title">monastery.jpg</div>
+
+    <div class="image-row">
+        <div>
+            <img src="media/color_False_monastery.jpg" alt="Image 1" width="200" height="200">
+            <div class="image-caption">R: [3,2] G: [-3,2]</div>
+        </div>
+        <div>
+            <img src="media/color_True_monastery.jpg" alt="Image 2" width="200" height="200">
+            <div class="image-caption">R: [3,2] G: [-3,2]</div>
+        </div>
+    </div>
+
+    <div class="small-title">tobolsk.jpg</div>
+
+    <div class="image-row">
+        <div>
+            <img src="media/color_False_tobolsk.jpg" alt="Image 1" width="200" height="200">
+            <div class="image-caption">R: [6,3] G: [3,2]</div>
+        </div>
+        <div>
+            <img src="media/color_True_tobolsk.jpg" alt="Image 2" width="200" height="200">
+            <div class="image-caption">R: [6,3] G: [3,2]</div>
+        </div>
+    </div>
+
+    <div class="small-title">church.tif</div>
+
+    <div class="image-row">
+        <div>
+            <img src="media/color_False_church.jpg" alt="Image 1" width="200" height="200">
+            <div class="image-caption">R: [58,-4] G: [25,3]</div>
+        </div>
+        <div>
+            <img src="media/color_True_church.jpg" alt="Image 2" width="200" height="200">
+            <div class="image-caption">R: [58,-4] G: [25,3]</div>
+        </div>
+    </div>
+
+    <div class="small-title">emir.tif</div>
+
+    <div class="image-row">
+        <div>
+            <img src="media/color_False_emir.jpg" alt="Image 1" width="200" height="200">
+            <div class="image-caption">R: [107,17] G: [-3,7]</div>
+        </div>
+        <div>
+            <img src="media/color_True_emir.jpg" alt="Image 2" width="200" height="200">
+            <div class="image-caption">R: [110,47] G: [49,24]</div>
+        </div>
+    </div>
+
+    <div class="small-title">harvesters.tif</div>
+
+    <div class="image-row">
+        <div>
+            <img src="media/color_False_harvesters.jpg" alt="Image 1" width="200" height="200">
+            <div class="image-caption">R: [120,7] G: [118,-3]</div>
+        </div>
+        <div>
+            <img src="media/color_True_harvesters.jpg" alt="Image 2" width="200" height="200">
+            <div class="image-caption">R: [123,13] G: [61,14]</div>
+        </div>
+    </div>
+
+    <div class="small-title">icon.tif</div>
+
+    <div class="image-row">
+        <div>
+            <img src="media/color_False_icon.jpg" alt="Image 1" width="200" height="200">
+            <div class="image-caption">R: [89,22] G: [42,16]</div>
+        </div>
+        <div>
+            <img src="media/color_True_icon.jpg" alt="Image 2" width="200" height="200">
+            <div class="image-caption">R: [88,23] G: [39,16]</div>
+        </div>
+    </div>
+
+    <div class="small-title">lady.tif</div>
+
+    <div class="image-row">
+        <div>
+            <img src="media/color_False_lady.jpg" alt="Image 1" width="200" height="200">
+            <div class="image-caption">R: [123,-17] G: [57,-6]</div>
+        </div>
+        <div>
+            <img src="media/color_True_lady.jpg" alt="Image 2" width="200" height="200">
+            <div class="image-caption">R: [121,13] G: [57,9]</div>
+        </div>
+    </div>
+
+    <div class="small-title">melons.tif</div>
+
+    <div class="image-row">
+        <div>
+            <img src="media/color_False_melons.jpg" alt="Image 1" width="200" height="200">
+            <div class="image-caption">R: [176,7] G: [83,4]</div>
+        </div>
+        <div>
+            <img src="media/color_True_melons.jpg" alt="Image 2" width="200" height="200">
+            <div class="image-caption">R: [176,14] G: [77,5]</div>
+        </div>
+    </div>
+
+    <div class="small-title">onion_church.tif</div>
+
+    <div class="image-row">
+        <div>
+            <img src="media/color_False_onion_church.jpg" alt="Image 1" width="200" height="200">
+            <div class="image-caption">R: [108,0] G: [52,22]</div>
+        </div>
+        <div>
+            <img src="media/color_True_onion_church.jpg" alt="Image 2" width="200" height="200">
+            <div class="image-caption">R: [108,35] G: [53,23]</div>
+        </div>
+    </div>
+
+    <div class="small-title">sculpture.tif</div>
+
+    <div class="image-row">
+        <div>
+            <img src="media/color_False_sculpture.jpg" alt="Image 1" width="200" height="200">
+            <div class="image-caption">R: [140,-26] G: [33,-11]</div>
+        </div>
+        <div>
+            <img src="media/color_True_sculpture.jpg" alt="Image 2" width="200" height="200">
+            <div class="image-caption">R: [140,-26] G: [33,-11]</div>
+        </div>
+    </div>
+
+</body>
+</html>
