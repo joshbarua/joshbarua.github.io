@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Template</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        section {
+            margin-bottom: 50px;
+        }
+
+        .subsection {
+            margin-bottom: 30px;
+        }
+
+        .subsection h3 {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+
+        .subsection p {
+            font-size: 18px;
+            text-align: left;
+        }
+
+        .image-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .image-grid img {
+            max-width: 100%;
+            width: 200px;
+            height: auto;
+        }
+
+        .image-grid img:nth-child(n+5) {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Document Overview</h1>
+        
+        <!-- Overview Section -->
+        <section>
+            <h2>Overview</h2>
+            <p>This is the overview of the document where general information can be displayed.</p>
+        </section>
+        
+        <!-- Section 1 -->
+        <section>
+            <h2>Part 1: Fun with Filters</h2>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <h3>Part 1.1: Finite Difference Operator</h3>
+                <p>In section 1.1, I show the effects of convolving the finite difference operators Dx = [1 -1] and Dy = [1 -1]T with the image of the cameraman. To combine the partial derivatives into a gradient magnitude image, I computed sqrt(dx**2 + dy**2). Lastly, I binarized the gradient magnitude with a threshold of 75 to create an edge image. The order of images presented from left-to-right is dx, dy, gradient magnitude, and binarized.</p>
+
+                <!-- Image Grid -->
+                <div class="image-grid">
+                    <img src="media/dx.png" alt="Image 1">
+                    <img src="media/dy.png" alt="Image 2">
+                    <img src="media/grad_magnitude.jpg" alt="Image 3">
+                    <img src="media/binarized_cameraman.jpg" alt="Image 4">
+                </div>
+            </div>
+
+            <!-- Additional Subsections -->
+            <div class="subsection">
+                <h3>Part 1.2: Derivative of Gaussian (DoG) Filter</h3>
+                <p>To denoise the results from section 1.1, I first apply a Gaussian filter to smooth out the image of the cameraman and then repeat the steps from 1.1. For the Gaussian filter, I used a kernel size of 15 with a standard deviation of 2.5. For the binarization, I used a threshold of 22. The order of images presented from left-to-right is gaussian dx, gaussian dy, gaussian gradient magnitude, and gaussian binarized.</p>
+                <div class="image-grid">
+                    <img src="media/dx_gauss.png" alt="Image 1">
+                    <img src="media/dy_gauss.png" alt="Image 2">
+                    <img src="media/grad_magnitude_gaussian.jpg" alt="Image 3">
+                    <img src="media/binarized_cameraman_gaussian.jpg" alt="Image 4">
+                </div>
+                <p>To test the derivative theorem of convolution, I first convolve the Gaussian filter with the finite difference operators Dx and Dy, and then convolve the resulting filter with the image. According to the theorem, the final results should look the same. I found that to make this work in practice, I had to set boundary='symm' when using scipy.signal.convolve2d. I use the same threshold for binarization and parameters for the Gaussian filter as above. The order of images presented from left-to-right is DoG dx, DoG dy, DoG gradient magnitude, and DoG binarized.</p>
+                <div class="image-grid">
+                    <img src="media/dx_dog.png" alt="Image 1">
+                    <img src="media/dy_dog.png" alt="Image 2">
+                    <img src="media/grad_magnitude_dog.jpg" alt="Image 3">
+                    <img src="media/binarized_cameraman_dog.jpg" alt="Image 4">
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2 -->
+        <section>
+            <h2>Part 2: Fun with Frequencies!</h2>
+
+            <!-- Subsection 2.4 -->
+            <div class="subsection">
+                <h3>Part 2.1: Image "Sharpening"</h3>
+                <p>To sharpen an image, I first convolve the image with a Gaussian filter and then subtract this result from the original image to extract the high frequency details. Then, I add the high frequency image multiplied by some alpha parameter (which controls the amount of sharpening) to the original image. The sharpened image is calculated with the unsharp mask filter, img + alpha * (img - blurred).</p>
+                <h4>Taj Mahal: alpha = 0, 1, 3, 10</h4>
+                <!-- Image Grid -->
+                <div class="image-grid">
+                    <img src="media/sharp_taj_0.png" alt="Image 1">
+                    <img src="media/sharp_taj_1.png" alt="Image 2">
+                    <img src="media/sharp_taj_3.png" alt="Image 3">
+                    <img src="media/sharp_taj_10.png" alt="Image 4">
+                </div>
+                <h4>Owl: alpha = 0, 3</h4>
+                <!-- Image Grid -->
+                <div class="image-grid">
+                    <img src="media/sharp_owl_0.png" alt="Image 1">
+                    <img src="media/sharp_owl_3.png" alt="Image 2">
+                </div>
+                <p>Below I have a sharp image of a waterfall. To test whether sharpening can fully recover the high frequency details of an image, I first blurred the waterfall using a Gaussian filter and then sharpened it using the unsharp mask filter. While the sharpened image (right) does appear sharper than the blurred image (middle), it still fails to recover the full range of high frequency signals found in the original image (left) upon closer inspection.</p>
+                <h4>Waterfall: original image, blurred image, sharpened image with alpha = 3.</h4>
+                <!-- Image Grid -->
+                <div class="image-grid">
+                    <img src="media/unblurred_waterfall.png" alt="Image 1">
+                    <img src="media/blurred_waterfall.png" alt="Image 2">
+                    <img src="media/sharp_blurred_waterfall_3.png" alt="Image 3">
+                </div>
+            </div>
+            <div class="subsection">
+                <h3>Part 2.2: Hybrid Images</h3>
+                <p>Given two images, I create a hybrid image by extracting the high frequency components of one image and the low frequency components of the other image and averaging the two results together. To extract the high and low frequency components, I use a Gaussian filter to blur the image.</p>
+                <h4>Derek and Nutmeg</h4>
+                <!-- Image Grid -->
+                <div class="image-grid">
+                    <img src="media/derek_aligned.png" alt="Image 1">
+                    <img src="media/nutmeg_aligned.png" alt="Image 2">
+                    <img src="media/derek_nutmeg_hybrid.png" alt="Image 3">
+                </div>
+                <h4>Hoover Tower and Campanile</h4>
+                <!-- Image Grid -->
+                <div class="image-grid">
+                    <img src="media/campanile_aligned.png" alt="Image 1">
+                    <img src="media/hoover_aligned.png" alt="Image 2">
+                    <img src="media/hoover_campanile_hybrid.png" alt="Image 3">
+                </div>
+                <h4>Cristiano Ronaldo and Neanderthal with Fourier transform into the frequency domain</h4>
+                <!-- Image Grid -->
+                <div class="image-grid">
+                    <img src="media/neanderthal_aligned.png" alt="Image 1">
+                    <img src="media/neanderthal_aligned_ft.png" alt="Image 2">
+                    <img src="media/ronaldo_aligned.png" alt="Image 1">
+                    <img src="media/ronaldo_aligned_ft.png" alt="Image 2">
+                </div>
+                <div class="image-grid">
+                    <img src="media/neanderthal_HF.png" alt="Image 1">
+                    <img src="media/neanderthal_HF_ft.png" alt="Image 2">
+                    <img src="media/ronaldo_LF.png" alt="Image 1">
+                    <img src="media/ronaldo_LF_ft.png" alt="Image 2">
+                </div>
+                <div class="image-grid">
+                    <img src="media/ronaldo_neanderthal_hybrid.png" alt="Image 1">
+                    <img src="media/ronaldo_neanderthal_hybrid_ft.png" alt="Image 2">
+                </div>
+            </div>
+            <div class="subsection">
+                <h3>Part 2.3: Gaussian and Laplacian Stacks</h3>
+                <p>A Gaussian stack iteratively applies a Gaussian filter to an image at each level to increasingly blur the image. A Laplacian stack iteratively computes the difference between adjacent elements in the Gaussian stack to extract high frequency details from the image. The top level of the Laplacian stack is a copy of the top level of the Gaussian stack so that when we collapse the stack we are able to reconstruct the original image. Note: images in the Laplacian stack have been normalized for visualization.</p>
+                <h4>Apple: Gaussian stack top, Laplacian stack bottom</h4>
+                <div class="image-grid">
+                    <img src="media/apple_stacks.png" alt="Image 1" style="width: 800px;">
+                </div>
+                <h4>Orange: Gaussian stack top, Laplacian stack bottom</h4>
+                <div class="image-grid">
+                    <img src="media/orange_stacks.png" alt="Image 1" style="width: 800px;">
+                </div>
+            </div>
+            <div class="subsection">
+                <h3>Part 2.4: Multiresolution Blending (a.k.a. the oraple!)</h3>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
