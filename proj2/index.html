@@ -61,17 +61,16 @@
 </head>
 <body>
     <div class="container">
-        <h1>Document Overview</h1>
+        <h1>CS180 Project 2: Fun with Filters and Frequencies</h1>
         
         <!-- Overview Section -->
         <section>
-            <h2>Overview</h2>
-            <p>This is the overview of the document where general information can be displayed.</p>
+            <h2>Josh Barua</h2>
         </section>
         
         <!-- Section 1 -->
         <section>
-            <h2>Part 1: Fun with Filters</h2>
+            <h1>Part 1: Fun with Filters</h1>
 
             <!-- Subsection 1.1 -->
             <div class="subsection">
@@ -80,10 +79,10 @@
 
                 <!-- Image Grid -->
                 <div class="image-grid">
-                    <img src="media/dx.png" alt="Image 1">
-                    <img src="media/dy.png" alt="Image 2">
-                    <img src="media/grad_magnitude.jpg" alt="Image 3">
-                    <img src="media/binarized_cameraman.jpg" alt="Image 4">
+                    <img src="media/dx.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/dy.png" alt="Image 2" style="width: 300px;">
+                    <img src="media/grad_magnitude.jpg" alt="Image 3" style="width: 300px;">
+                    <img src="media/binarized_cameraman.jpg" alt="Image 4" style="width: 300px;">
                 </div>
             </div>
 
@@ -92,24 +91,24 @@
                 <h3>Part 1.2: Derivative of Gaussian (DoG) Filter</h3>
                 <p>To denoise the results from section 1.1, I first apply a Gaussian filter to smooth out the image of the cameraman and then repeat the steps from 1.1. For the Gaussian filter, I used a kernel size of 15 with a standard deviation of 2.5. For the binarization, I used a threshold of 22. The order of images presented from left-to-right is gaussian dx, gaussian dy, gaussian gradient magnitude, and gaussian binarized.</p>
                 <div class="image-grid">
-                    <img src="media/dx_gauss.png" alt="Image 1">
-                    <img src="media/dy_gauss.png" alt="Image 2">
-                    <img src="media/grad_magnitude_gaussian.jpg" alt="Image 3">
-                    <img src="media/binarized_cameraman_gaussian.jpg" alt="Image 4">
+                    <img src="media/dx_gauss.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/dy_gauss.png" alt="Image 2" style="width: 300px;">
+                    <img src="media/grad_magnitude_gaussian.jpg" alt="Image 3" style="width: 300px;">
+                    <img src="media/binarized_cameraman_gaussian.jpg" alt="Image 4" style="width: 300px;">
                 </div>
-                <p>To test the derivative theorem of convolution, I first convolve the Gaussian filter with the finite difference operators Dx and Dy, and then convolve the resulting filter with the image. According to the theorem, the final results should look the same. I found that to make this work in practice, I had to set boundary='symm' when using scipy.signal.convolve2d. I use the same threshold for binarization and parameters for the Gaussian filter as above. The order of images presented from left-to-right is DoG dx, DoG dy, DoG gradient magnitude, and DoG binarized.</p>
+                <p>To test the derivative theorem of convolution, I first convolve the Gaussian filter with the finite difference operators Dx and Dy, and then convolve the resulting filters with the image. According to the theorem, the final results should look the same. I found that to make this work in practice, I had to set boundary='symm' when using scipy.signal.convolve2d. I use the same threshold for binarization and parameters for the Gaussian filter as above. The order of images presented from left-to-right is DoG dx, DoG dy, DoG gradient magnitude, and DoG binarized.</p>
                 <div class="image-grid">
-                    <img src="media/dx_dog.png" alt="Image 1">
-                    <img src="media/dy_dog.png" alt="Image 2">
-                    <img src="media/grad_magnitude_dog.jpg" alt="Image 3">
-                    <img src="media/binarized_cameraman_dog.jpg" alt="Image 4">
+                    <img src="media/dx_dog.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/dy_dog.png" alt="Image 2" style="width: 300px;">
+                    <img src="media/grad_magnitude_dog.jpg" alt="Image 3" style="width: 300px;">
+                    <img src="media/binarized_cameraman_dog.jpg" alt="Image 4" style="width: 300px;">
                 </div>
             </div>
         </section>
 
         <!-- Section 2 -->
         <section>
-            <h2>Part 2: Fun with Frequencies!</h2>
+            <h1>Part 2: Fun with Frequencies!</h1>
 
             <!-- Subsection 2.4 -->
             <div class="subsection">
@@ -118,24 +117,24 @@
                 <h4>Taj Mahal: alpha = 0, 1, 3, 10</h4>
                 <!-- Image Grid -->
                 <div class="image-grid">
-                    <img src="media/sharp_taj_0.png" alt="Image 1">
-                    <img src="media/sharp_taj_1.png" alt="Image 2">
-                    <img src="media/sharp_taj_3.png" alt="Image 3">
-                    <img src="media/sharp_taj_10.png" alt="Image 4">
+                    <img src="media/sharp_taj_0.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/sharp_taj_1.png" alt="Image 2" style="width: 300px;">
+                    <img src="media/sharp_taj_3.png" alt="Image 3" style="width: 300px;">
+                    <img src="media/sharp_taj_10.png" alt="Image 4" style="width: 300px;">
                 </div>
                 <h4>Owl: alpha = 0, 3</h4>
                 <!-- Image Grid -->
                 <div class="image-grid">
-                    <img src="media/sharp_owl_0.png" alt="Image 1">
-                    <img src="media/sharp_owl_3.png" alt="Image 2">
+                    <img src="media/sharp_owl_0.png" alt="Image 1" style="width: 400px;">
+                    <img src="media/sharp_owl_3.png" alt="Image 2" style="width: 400px;"> 
                 </div>
                 <p>Below I have a sharp image of a waterfall. To test whether sharpening can fully recover the high frequency details of an image, I first blurred the waterfall using a Gaussian filter and then sharpened it using the unsharp mask filter. While the sharpened image (right) does appear sharper than the blurred image (middle), it still fails to recover the full range of high frequency signals found in the original image (left) upon closer inspection.</p>
                 <h4>Waterfall: original image, blurred image, sharpened image with alpha = 3.</h4>
                 <!-- Image Grid -->
                 <div class="image-grid">
-                    <img src="media/unblurred_waterfall.png" alt="Image 1">
-                    <img src="media/blurred_waterfall.png" alt="Image 2">
-                    <img src="media/sharp_blurred_waterfall_3.png" alt="Image 3">
+                    <img src="media/unblurred_waterfall.png" alt="Image 1" style="width: 400px;">
+                    <img src="media/blurred_waterfall.png" alt="Image 2" style="width: 400px;">
+                    <img src="media/sharp_blurred_waterfall_3.png" alt="Image 3" style="width: 400px;">
                 </div>
             </div>
             <div class="subsection">
@@ -144,50 +143,79 @@
                 <h4>Derek and Nutmeg</h4>
                 <!-- Image Grid -->
                 <div class="image-grid">
-                    <img src="media/derek_aligned.png" alt="Image 1">
-                    <img src="media/nutmeg_aligned.png" alt="Image 2">
-                    <img src="media/derek_nutmeg_hybrid.png" alt="Image 3">
+                    <img src="media/derek_aligned.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/nutmeg_aligned.png" alt="Image 2" style="width: 300px;">
+                    <img src="media/derek_nutmeg_hybrid.png" alt="Image 3" style="width: 300px;"> 
                 </div>
-                <h4>Hoover Tower and Campanile</h4>
+                <h4>Hoover Tower and Campanile (failure case)</h4>
+                <p>After tweaking the parameters a bunch this was the best I could get, but the high frequency details of the campanile are too prevalent in the image and can still be seen from afar.</p>
                 <!-- Image Grid -->
                 <div class="image-grid">
-                    <img src="media/campanile_aligned.png" alt="Image 1">
-                    <img src="media/hoover_aligned.png" alt="Image 2">
-                    <img src="media/hoover_campanile_hybrid.png" alt="Image 3">
+                    <img src="media/campanile_aligned.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/hoover_aligned.png" alt="Image 2" style="width: 300px;">
+                    <img src="media/hoover_campanile_hybrid.png" alt="Image 3" style="width: 300px;">
                 </div>
                 <h4>Cristiano Ronaldo and Neanderthal with Fourier transform into the frequency domain</h4>
                 <!-- Image Grid -->
                 <div class="image-grid">
-                    <img src="media/neanderthal_aligned.png" alt="Image 1">
-                    <img src="media/neanderthal_aligned_ft.png" alt="Image 2">
-                    <img src="media/ronaldo_aligned.png" alt="Image 1">
-                    <img src="media/ronaldo_aligned_ft.png" alt="Image 2">
+                    <img src="media/neanderthal_aligned.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/neanderthal_aligned_ft.png" alt="Image 2" style="width: 300px;">
+                    <img src="media/ronaldo_aligned.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/ronaldo_aligned_ft.png" alt="Image 2" style="width: 300px;">
                 </div>
                 <div class="image-grid">
-                    <img src="media/neanderthal_HF.png" alt="Image 1">
-                    <img src="media/neanderthal_HF_ft.png" alt="Image 2">
-                    <img src="media/ronaldo_LF.png" alt="Image 1">
-                    <img src="media/ronaldo_LF_ft.png" alt="Image 2">
+                    <img src="media/neanderthal_HF.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/neanderthal_HF_ft.png" alt="Image 2" style="width: 300px;">
+                    <img src="media/ronaldo_LF.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/ronaldo_LF_ft.png" alt="Image 2" style="width: 300px;">
                 </div>
                 <div class="image-grid">
-                    <img src="media/ronaldo_neanderthal_hybrid.png" alt="Image 1">
-                    <img src="media/ronaldo_neanderthal_hybrid_ft.png" alt="Image 2">
+                    <img src="media/ronaldo_neanderthal_hybrid.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/ronaldo_neanderthal_hybrid_ft.png" alt="Image 2" style="width: 300px;">
                 </div>
             </div>
             <div class="subsection">
                 <h3>Part 2.3: Gaussian and Laplacian Stacks</h3>
                 <p>A Gaussian stack iteratively applies a Gaussian filter to an image at each level to increasingly blur the image. A Laplacian stack iteratively computes the difference between adjacent elements in the Gaussian stack to extract high frequency details from the image. The top level of the Laplacian stack is a copy of the top level of the Gaussian stack so that when we collapse the stack we are able to reconstruct the original image. Note: images in the Laplacian stack have been normalized for visualization.</p>
-                <h4>Apple: Gaussian stack top, Laplacian stack bottom</h4>
+                <h4>Apple: Gaussian stack (top), Laplacian stack (bottom)</h4>
                 <div class="image-grid">
-                    <img src="media/apple_stacks.png" alt="Image 1" style="width: 800px;">
+                    <img src="media/apple_stacks.png" alt="Image 1" style="width: 1000px;">
                 </div>
-                <h4>Orange: Gaussian stack top, Laplacian stack bottom</h4>
+                <h4>Orange: Gaussian stack (top), Laplacian stack (bottom)</h4>
                 <div class="image-grid">
-                    <img src="media/orange_stacks.png" alt="Image 1" style="width: 800px;">
+                    <img src="media/orange_stacks.png" alt="Image 1" style="width: 1000px;">
                 </div>
             </div>
             <div class="subsection">
-                <h3>Part 2.4: Multiresolution Blending (a.k.a. the oraple!)</h3>
+                <h3>Part 2.4: Multiresolution Blending</h3>
+                <p>To blend two images together, we decompose the blending at various levels of the stack and collapse the result at the end. To blend the image at each level <i>i</i>, I compute (img1_laplacian[i] * mask_gaussian[i]) + (img2_laplacian[i] * (1 - mask_gaussian[i])).</p>
+                <h4>Orapple: mask (top), left half (middle), right half (bottom)</h4>
+                <div class="image-grid">
+                    <img src="media/orapple_stack.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/orapple.png" alt="Image 1" style="width: 300px;">
+                </div>
+                <h4>Redbull and Mercedes F1 cars</h4>
+                <p>I use a centered vertical mask similar to the mask used for the apple and orange for this result.</p>
+                <div class="image-grid">
+                    <img src="media/redbull_small.jpg" alt="Image 1" style="width: 400px;">
+                    <img src="media/mercedes_small.jpg" alt="Image 1" style="width: 400px;">
+                    <img src="media/redbull_mercedes_splined.png" alt="Image 1" style="width: 400px;">
+                </div>
+                <h4>Adam Ondra and Hand using non-linear mask</h4>
+                <div class="image-grid">
+                    <img src="media/climber_mask.jpg" alt="Image 1" style="width: 300px;">
+                    <img src="media/ondra_small.jpeg" alt="Image 1" style="width: 300px;">
+                    <img src="media/hand.jpg" alt="Image 1" style="width: 300px;">
+                    <img src="media/ondra_hand_spline.png" alt="Image 1" style="width: 300px;">
+                </div>
+            </div>
+            <div class="subsection">
+                <h3>Bells & Whistles / Takeaways / Acknowledgements</h3>
+                <p><b>Bells & Whistles:</b> All implementations of Gaussian and Laplacian stacks and multiresolution blending are done with color.</p>
+                <p><b>Takeaways:</b> My biggest takeaways from this project are the powerful transformations we can apply to images with a basic understanding of high-pass and low-filters and image characteristics at different frequencies. If I were to show these results to someone they would probably guess it was the byproduct of a creative prompt + stable diffusion, but instead it only required simple image processing techniques!</p>
+                <p><b>Acknowledgements:</b> I used the following prompt with ChatGPT to create a base template for the website: <a href="https://chatgpt.com/share/66f23112-a398-8007-8292-c12dcebf2828">https://chatgpt.com/share/66f23112-a398-8007-8292-c12dcebf2828</a></p>
             </div>
         </section>
     </div>
