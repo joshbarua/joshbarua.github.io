@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS180 Project 2</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        section {
+            margin-bottom: 50px;
+        }
+
+        .subsection {
+            margin-bottom: 30px;
+        }
+
+        .subsection h3 {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+
+        .subsection p {
+            font-size: 18px;
+            text-align: left;
+        }
+
+        .image-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .image-grid img {
+            max-width: 100%;
+            width: 200px;
+            height: auto;
+        }
+
+        .image-grid img:nth-child(n+5) {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CS180 Project 3: Face Morphing</h1>
+        
+        <!-- Overview Section -->
+        <section>
+            <h2>Josh Barua</h2>
+        </section>
+        
+        <!-- Section 1 -->
+        <section>
+            <h1>Part 1: Defining Correspondences</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1, I first identified 45 pairs of (x,y) points between the two images that map to a similar region of the face. Then I computed an average shape by taking the average of every pair of (x,y) points. I then computed the Delaunay triangulation using the 45 2D points in the average shape which I have overlayed onto the original images below for visualization.</p>
+
+                <div class="image-grid">
+                    <img src="media/delaunay_tri_josh.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/delaunay_tri_george.png" alt="Image 2" style="width: 300px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 2: Computing the "Mid-way Face"</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>Part 2 requires three steps to compute the mid-way face:<br><br>1. Computing the average shape<br>2. Computing the affine transformation matrix from the source triangle to the target triangle<br>3. Inverse warping pixels from the original image to the target image</p>
+                <p><b>Affine transformation:</b> To compute the affine transformation matrix between two triangles, I defined a function that takes in 12 points (6 from each triangle). Using these points, I set up a system of equations with 6 unknowns and 6 equations (i.e. has a unique solution) as a matrix-vector product. I solved the system of equations using <code>np.linalg.solve()</code>.</p>
+                <p><b>Inverse Warping:</b> The affine transformation matrix defines how to map a point in the source triangle to the target triangle. If we want to populate the target triangle with pixel values from the source triangle, we can take the inverse of the affine transformation matrix and apply it to each point in the target triangle. One problem with inverse warping is that the location of the source pixel we calculate could be between two pixels -- so I use nearest neighbors interpolation to pick a color value. In practice, I used <code>sk.draw.polygon()</code> to create a triangular mask and <code>scipy.interpolate.RegularGridInterpolator()</code> for interpolation.</p>
+                <h4>Original Image (left), Warped Image (right)</h4>
+                <p>My face became significatly wider and George Clooney's face profile became skinnier.</p>
+                <div class="image-grid">
+                    <img src="media/josh_small.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/warp_josh.png" alt="Image 2" style="width: 300px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/george.jpg" alt="Image 1" style="width: 300px;">
+                    <img src="media/warp_george.png" alt="Image 2" style="width: 300px;">
+                </div>
+                <h4>Mid-way Image</h4>
+                <div class="image-grid">
+                    <img src="media/josh_george_midway.png" alt="Image 1" style="width: 300px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 3: The Morph Sequence</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 3, we generalize the mid-way face from part 2 using the parameters <code>warp_func</code> which controls what fraction of the shape to use from each image and <code>dissolve_frac</code> which controls what fraction of color to use from each image. Using a simple for loop ranging from [0,1] I am able to generate 46 intermediate faces and stitch them together to create the gif below.</p>
+                <div class="image-grid">
+                    <img src="media/josh_george_animation.gif" alt="Image 1" style="width: 400px;">
+                </div>
+        </section>
+        <section>
+            <h1>Part 4: The "Mean face" of a population</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 4, I used the Danes dataset of faces to compute the mean face of the population and morph between the mean face and my face. To compute the mean face, I computed the average shape across all keypoints in the dataset, morphed each face to the average shape, and cross-dissolved across all the morphed faces (simply averaging across all the faces from the dataset does not work). Below, I have visualized faces in the dataset morphed to the mean face and the mean face itself.</p>
+                <h4>Original Face (left), Morphed to Average (right)</h4>
+                <div class="image-grid">
+                    <img src="media/16-1m.jpg" alt="Image 1" style="width: 300px;">
+                    <img src="media/16-1m_average.png" alt="Image 1" style="width: 300px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/18-1m.jpg" alt="Image 1" style="width: 300px;">
+                    <img src="media/18-1m_average.png" alt="Image 1" style="width: 300px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/35-1f.jpg" alt="Image 1" style="width: 300px;">
+                    <img src="media/35-1f_average.png" alt="Image 1" style="width: 300px;">
+                </div>
+                <h4>Mean Face of Danes</h4>
+                <div class="image-grid">
+                    <img src="media/average_face.png" alt="Image 1" style="width: 400px;">
+                </div>
+                <p>Below, I present my face morphed to the geometry of the average face (left), and the average face morphed to the geometry of my face (right). My face becomes a bit wider (since I have a narrower face than the average person) and the average face becomes narrower.</p>
+                <div class="image-grid">
+                    <img src="media/josh_average_face.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/average_face_josh.png" alt="Image 1" style="width: 300px;">
+                </div>
+        </section>
+        <section>
+            <h1>Part 5: Caricatures</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 5, I created a caricature by extrapolating my facial features from the mean. In particular, let the keypoints selected on my face be a vector <code>s</code> and the keypoints on the average face be a vector <code>t</code>, I calculated <code>s + alpha*(t - s)</code> as the target keypoints. I then warp my face to the target keypoints and visualize the results below.</p>
+                <h4>alpha = 0.5, 1</h4>
+                <div class="image-grid">
+                    <img src="media/josh_caricature_0.5.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/josh_caricature_1.png" alt="Image 1" style="width: 300px;">
+                </div>
+                <h4>alpha = 2, 3</h4>
+                <div class="image-grid">
+                    <img src="media/josh_caricature_2.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/josh_caricature_3.png" alt="Image 1" style="width: 300px;">
+                </div>
+        </section>
+        <section>
+            <h1>Part 6: Bells and Whistles</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 6, I chose to create a morph sequence between all of my house mates.</p>
+                <div class="image-grid">
+                    <img src="media/house_animation.gif" alt="Image 1" style="width: 400px;">
+                </div>
+        </section>
+</body>
+</html>
