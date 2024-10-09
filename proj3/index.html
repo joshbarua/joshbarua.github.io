@@ -74,7 +74,7 @@
 
             <!-- Subsection 1.1 -->
             <div class="subsection">
-                <p>In part 1, I first identified 45 pairs of (x,y) points between the two images that map to a similar region of the face. Then I computed an average shape by taking the average of every pair of (x,y) points. I then computed the Delaunay triangulation using the 45 2D points in the average shape which I have overlayed onto the original images below for visualization.</p>
+                <p>In part 1, I first identified 45 pairs of (x,y) points between the two images that map to a similar region of the face. To the label the correspondences, I used the provided labeling tool <a href="https://cal-cs180.github.io/fa23/hw/proj3/tool.html">here</a>. Then I computed an average shape by taking the average of every pair of (x,y) points. I then computed the Delaunay triangulation using the 45 2D points in the average shape which I have overlayed onto the original images below for visualization.</p>
 
                 <div class="image-grid">
                     <img src="media/delaunay_tri_josh.png" alt="Image 1" style="width: 300px;">
@@ -87,9 +87,9 @@
 
             <!-- Subsection 1.1 -->
             <div class="subsection">
-                <p>Part 2 requires three steps to compute the mid-way face:<br><br>1. Computing the average shape<br>2. Computing the affine transformation matrix from the source triangle to the target triangle<br>3. Inverse warping pixels from the original image to the target image</p>
-                <p><b>Affine transformation:</b> To compute the affine transformation matrix between two triangles, I defined a function that takes in 12 points (6 from each triangle). Using these points, I set up a system of equations with 6 unknowns and 6 equations (i.e. has a unique solution) as a matrix-vector product. I solved the system of equations using <code>np.linalg.solve()</code>.</p>
-                <p><b>Inverse Warping:</b> The affine transformation matrix defines how to map a point in the source triangle to the target triangle. If we want to populate the target triangle with pixel values from the source triangle, we can take the inverse of the affine transformation matrix and apply it to each point in the target triangle. One problem with inverse warping is that the location of the source pixel we calculate could be between two pixels -- so I use nearest neighbors interpolation to pick a color value. In practice, I used <code>sk.draw.polygon()</code> to create a triangular mask and <code>scipy.interpolate.RegularGridInterpolator()</code> for interpolation.</p>
+                <p>Part 2 requires three steps to compute the mid-way face:<br><br>1. Computing the average shape<br>2. Computing the affine transformation matrix from the source triangle to the target triangle<br>3. Inverse warping pixels from the original image to the target image and cross-dissolving</p>
+                <p><b>Affine transformation:</b> To compute the affine transformation matrix between two triangles, I defined a function that takes in 6 (x,y) points (3 from each triangle). Using these points, I set up a system of equations with 6 unknowns and 6 equations (i.e. has a unique solution) as a matrix-vector product. I solved the system of equations using <code>np.linalg.solve()</code>.</p>
+                <p><b>Inverse Warping:</b> The affine transformation matrix defines how to map a point in the source triangle to the target triangle. If we want to populate the target triangle with pixel values from the source triangle, we can take the inverse of the affine transformation matrix and apply it to each point in the target triangle. One problem with inverse warping is that the location of the source pixel we calculate could be between two pixels -- so I use nearest neighbors interpolation to pick a color value. In practice, I used <code>sk.draw.polygon()</code> to create a triangular mask and <code>scipy.interpolate.RegularGridInterpolator()</code> for interpolation. For cross-dissolving, I simply compute <code>(img1_warp * (1-dissolve_frac)) + (img2_warp * dissolve_frac)</code>.</p>
                 <h4>Original Image (left), Warped Image (right)</h4>
                 <p>My face became significatly wider and George Clooney's face profile became skinnier.</p>
                 <div class="image-grid">
