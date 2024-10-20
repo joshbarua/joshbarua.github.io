@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS180 Project 4A</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        section {
+            margin-bottom: 50px;
+        }
+
+        .subsection {
+            margin-bottom: 30px;
+        }
+
+        .subsection h3 {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+
+        .subsection p {
+            font-size: 18px;
+            text-align: left;
+        }
+
+        .image-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .image-grid img {
+            max-width: 100%;
+            width: 200px;
+            height: auto;
+        }
+
+        .image-grid img:nth-child(n+5) {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CS180 Project 4A: Image Warping and Mosaicing</h1>
+        
+        <!-- Overview Section -->
+        <section>
+            <h2>Josh Barua</h2>
+        </section>
+        
+        <!-- Section 1 -->
+        <section>
+            <h1>Part 1: Shoot the Pictures</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1, I took 2 photos of my room that would later be used for the mosaic. I ensured that my camera was the axis of rotation when taking the photos because the homography assumes a fixed viewpoint. The images had many corners which would make for good correspondence points.</p>
+                <h4>Image 1 (left), Image 2 (right)</h4>
+                <div class="image-grid">
+                    <img src="media/left_room.jpg" alt="Image 1" style="width: 400px;">
+                    <img src="media/right_room.jpg" alt="Image 2" style="width: 400px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 2: Recover Homographies</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>Part 2 required me to the recover the parameters of the homography transformation between image 1 and image 2. Given a set of correspondence points between the two images, I set up the following systems of equations (source: Bill Zheng's Project 4A website):</p>
+                <div class="image-grid">
+                    <img src="media/linear_equations.png" alt="Image 1" style="width: 600px;">
+                </div>
+                <p>With 4 pairs of correspondence points, this system would have a unique solution. However, with only 4 points the recovered homography would be prone to noise. Thus, I used 10 correspondence points and solved the overdetermined system with least squares via <code>np.linalg.lstsq()</code>.</p>
+            </div>
+        </section>
+        <section>
+            <h1>Part 3: Warp the Images</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 3, I warped image 1 using the homography I calculated in part 2. First, I take the 4 corners of image 1 and calculate the final bounding box by transforming them with H. Then, I take the inverse of H and perform inverse warping on the final bounding box similarly to what I did in Project 3. I visualized the result of warping image 1 below:</p>
+                <div class="image-grid">
+                    <img src="media/left_room_transform.png" alt="Image 1" style="width: 400px;">
+                </div>
+        </section>
+        <section>
+            <h1>Part 4: Image Rectification</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 4, I used the warping function from part 3 to "rectify" an image. This requires taking a photo of object with known rectangular propeties as image 1 and setting correspondence points in image 2 as being rectangular. My corresponse points in image 2 were: [[200,300],[250,300],[200,400],[250,400]]. Below I visualized an outlet being rectified.</p>
+                <h4>Original Image (left), Rectified Image (right)</h4>
+                <div class="image-grid">
+                    <img src="media/outlet.jpg" alt="Image 1" style="width: 400px;">
+                    <img src="media/outlet_rectification.png" alt="Image 1" style="width: 400px;">
+                </div>
+        </section>
+        <section>
+            <h1>Part 5: Blend the images into a mosaic</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 5, I create an image mosaic by combining image stitching and blending. To stitch the images together, I first compute the corners of img1 after applying the homography and combine them with the corners of img2 (unwarped). Then, I find the minimum and maximum coordinates to compute the final bounding box. Lastly, I warp image 1 and overlay it onto image 2 in the final bounding box (using shifts to ensure the two images are positioned correctly). However, the stitched image will have strong edge artifacts from directly overlaying the images. To resolve this, I blend the images by applying a mask which averages pixels that are valid in both images and directly uses pixel values if it's non-zero in only one image.</p>
+                <h4>Room Mosaic</h4>
+                <div class="image-grid">
+                    <img src="media/room_mosaic.png" alt="Image 1" style="width: 600px;">
+                </div>
+        </section>
+</body>
+</html>
