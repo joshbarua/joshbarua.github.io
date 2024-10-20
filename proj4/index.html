@@ -121,7 +121,7 @@
 
             <!-- Subsection 1.1 -->
             <div class="subsection">
-                <p>In part 5, I create an image mosaic by combining image stitching and blending. To stitch the images together, I first compute the corners of img1 after applying the homography and combine them with the corners of img2 (unwarped). Then, I find the minimum and maximum coordinates to compute the final bounding box. Lastly, I warp image 1 and overlay it onto image 2 in the final bounding box (using shifts to ensure the two images are positioned correctly). However, the stitched image will have strong edge artifacts from directly overlaying the images. To resolve this, I blend the images by applying a mask which averages pixels that are valid in both images and directly uses pixel values if it's non-zero in only one image.</p>
+                <p>In part 5, I create an image mosaic by combining image stitching and blending. To stitch the images together, I first compute the corners of img1 after applying the homography. Then, I find the minimum and maximum coordinates among the transformed image 1 corners and the corners of image 2 (unwarped) to compute the final bounding box. Lastly, I warp image 1 and overlay it onto image 2 in the final bounding box (using shifts to ensure the two images are positioned correctly). However, the stitched image will have strong edge artifacts from directly overlaying the images. To resolve this, I blend the images by applying a mask which averages pixels that are valid in both images and directly uses pixel values if it's non-zero in only one image.</p>
                 <h4>Room Mosaic</h4>
                 <div class="image-grid">
                     <img src="media/room_mosaic.png" alt="Image 1" style="width: 600px;">
