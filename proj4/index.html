@@ -74,11 +74,19 @@
 
             <!-- Subsection 1.1 -->
             <div class="subsection">
-                <p>In part 1, I took 2 photos of my room that would later be used for the mosaic. I ensured that my camera was the axis of rotation when taking the photos because the homography assumes a fixed viewpoint. The images had many corners which would make for good correspondence points.</p>
+                <p>In part 1, I took 6 photos that would later be used for the mosaics. I ensured that my camera was the axis of rotation when taking the photos because the homography assumes a fixed viewpoint. The images had many corners which would make for good correspondence points.</p>
                 <h4>Image 1 (left), Image 2 (right)</h4>
                 <div class="image-grid">
                     <img src="media/left_room.jpg" alt="Image 1" style="width: 400px;">
                     <img src="media/right_room.jpg" alt="Image 2" style="width: 400px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/left_living.jpg" alt="Image 1" style="width: 400px;">
+                    <img src="media/right_living.jpg" alt="Image 2" style="width: 400px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/left_car.jpg" alt="Image 1" style="width: 400px;">
+                    <img src="media/right_car.jpg" alt="Image 2" style="width: 400px;">
                 </div>
             </div>
         </section>
@@ -100,8 +108,17 @@
             <!-- Subsection 1.1 -->
             <div class="subsection">
                 <p>In part 3, I warped image 1 using the homography I calculated in part 2. First, I take the 4 corners of image 1 and calculate the final bounding box by transforming them with H. Then, I take the inverse of H and perform inverse warping on the final bounding box similarly to what I did in Project 3. I visualized the result of warping image 1 below:</p>
+                <h4>Warped Bedroom</h4>
                 <div class="image-grid">
                     <img src="media/left_room_transform.png" alt="Image 1" style="width: 400px;">
+                </div>
+                <h4>Warped Living Room</h4>
+                <div class="image-grid">
+                    <img src="media/left_living_transform.png" alt="Image 1" style="width: 400px;">
+                </div>
+                <h4>Warped Car</h4>
+                <div class="image-grid">
+                    <img src="media/left_car_transform.png" alt="Image 1" style="width: 400px;">
                 </div>
         </section>
         <section>
@@ -109,11 +126,15 @@
 
             <!-- Subsection 1.1 -->
             <div class="subsection">
-                <p>In part 4, I used the warping function from part 3 to "rectify" an image. This requires taking a photo of object with known rectangular propeties as image 1 and setting correspondence points in image 2 as being rectangular. My corresponse points in image 2 were: [[200,300],[250,300],[200,400],[250,400]]. Below I visualized an outlet being rectified.</p>
+                <p>In part 4, I used the warping function from part 3 to "rectify" an image. This requires taking a photo of object with known rectangular or square propeties as image 1 and setting correspondence points in image 2 as being correctly aligned (rectangular or square). Below I visualized an outlet and a coaster being rectified.</p>
                 <h4>Original Image (left), Rectified Image (right)</h4>
                 <div class="image-grid">
                     <img src="media/outlet.jpg" alt="Image 1" style="width: 400px;">
                     <img src="media/outlet_rectification.png" alt="Image 1" style="width: 400px;">
+                </div>
+                <div class="image-grid"></div>
+                    <img src="media/coaster.jpg" alt="Image 1" style="width: 400px;">
+                    <img src="media/coaster_rectification.png" alt="Image 1" style="width: 400px;">
                 </div>
         </section>
         <section>
@@ -121,10 +142,18 @@
 
             <!-- Subsection 1.1 -->
             <div class="subsection">
-                <p>In part 5, I create an image mosaic by combining image stitching and blending. To stitch the images together, I first compute the corners of img1 after applying the homography. Then, I find the minimum and maximum coordinates among the transformed image 1 corners and the corners of image 2 (unwarped) to compute the final bounding box. Lastly, I warp image 1 and overlay it onto image 2 in the final bounding box (using shifts to ensure the two images are positioned correctly). However, the stitched image will have strong edge artifacts from directly overlaying the images. To resolve this, I blend the images by applying a mask which averages pixels that are valid in both images and directly uses pixel values if it's non-zero in only one image.</p>
-                <h4>Room Mosaic</h4>
+                <p>In part 5, I create an image mosaic by combining image stitching and blending. To stitch the images together, I first compute the new corners of image 1 after applying the homography. Then, I find the minimum and maximum coordinates among the transformed image 1 corners and the corners of image 2 (unwarped) to compute the final bounding box. Lastly, I warp image 1 and overlay it onto image 2 in the final bounding box (using shifts to ensure the two images are positioned correctly). However, the stitched image will have strong edge artifacts from directly overlaying the images. To resolve this, I blend the images by applying a mask which averages pixels that are valid in both images and directly uses pixel values if it's non-zero in only one image.</p>
+                <h4>Bedroom Mosaic</h4>
                 <div class="image-grid">
                     <img src="media/room_mosaic.png" alt="Image 1" style="width: 600px;">
+                </div>
+                <h4>Living Room Mosaic</h4>
+                <div class="image-grid"></div>
+                    <img src="media/living_mosaic.png" alt="Image 1" style="width: 600px;">
+                </div>
+                <h4>Car Mosaic</h4>
+                <div class="image-grid"></div>
+                    <img src="media/car_mosaic.png" alt="Image 1" style="width: 600px;">
                 </div>
         </section>
 </body>
