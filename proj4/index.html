@@ -139,22 +139,126 @@
         </section>
         <section>
             <h1>Part 5: Blend the images into a mosaic</h1>
-
+        
             <!-- Subsection 1.1 -->
             <div class="subsection">
                 <p>In part 5, I create an image mosaic by combining image stitching and blending. To stitch the images together, I first compute the new corners of image 1 after applying the homography. Then, I find the minimum and maximum coordinates among the transformed image 1 corners and the corners of image 2 (unwarped) to compute the final bounding box. Lastly, I warp image 1 and overlay it onto image 2 in the final bounding box (using shifts to ensure the two images are positioned correctly). However, the stitched image will have strong edge artifacts from directly overlaying the images. To resolve this, I blend the images by applying a mask which averages pixels that are valid in both images and directly uses pixel values if it's non-zero in only one image.</p>
                 <h4>Bedroom Mosaic</h4>
                 <div class="image-grid">
-                    <img src="media/room_mosaic.png" alt="Image 1" style="width: 600px;">
+                    <img src="media/room_mosaic.png" alt="Bedroom Mosaic" style="width: 600px;">
                 </div>
                 <h4>Living Room Mosaic</h4>
-                <div class="image-grid"></div>
-                    <img src="media/living_mosaic.png" alt="Image 1" style="width: 600px;">
+                <div class="image-grid">
+                    <img src="media/living_mosaic.png" alt="Living Room Mosaic" style="width: 600px;">
                 </div>
                 <h4>Car Mosaic</h4>
-                <div class="image-grid"></div>
-                    <img src="media/car_mosaic.png" alt="Image 1" style="width: 600px;">
+                <div class="image-grid">
+                    <img src="media/car_mosaic.png" alt="Car Mosaic" style="width: 600px;">
                 </div>
-        </section>
+            </div> 
+        </section>        
+        <section>
+            <h1>Part 6: Harris Corner Detection</h1>
+        
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 6, I use Harris corners as interest points which will enable me to automatically select correspondence points between two images. I use the provided function <code>get_harris_corners</code> which identifies the coordinates of corners in the scene and discards points along the borders of the image. Below I visualized the Harris corners overlaid onto my two images.</p>
+                <h4>Harris Corners Overlaid on Bedroom</h4>
+                <div class="image-grid">
+                    <img src="media/room_harris_corners.png" alt="Harris Corners on Bedroom" style="width: 800px;">
+                </div>
+            </div> 
+        </section>  
+        <section>
+            <h1>Part 7: Adaptive Non-Maximal Suppression (ANMS)</h1>
+        
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 7, I run ANMS to only select the top 500 strongest corners. I run ANMS as follows: for each point, I find the set of candidate points where the strength of the harris corner at that point * 0.9 is greater than the strength of the corner at the original point. I then compute the squared distance between each of these candidate points and my original point, with the minimum becoming the "supression radius" for the original point. I simply pick the 500 points with the highest supression radius (the global maxima has a supression radius of infinity).</p>
+                <h4>Harris Corners Selected by ANMS</h4>
+                <div class="image-grid">
+                    <img src="media/left_anms_corners.png" alt="" style="width: 500px;">
+                    <img src="media/right_anms_corners.png" alt="" style="width: 500px;">
+                </div>
+            </div> 
+        </section> 
+        <section>
+            <h1>Part 8: Feature Descriptor Extraction</h1>
+        
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 8, once the strongest keypoints have been selected, I extract feature descriptors that can enable me to find matching regions between the images. For each point, I extract a 40x40 window around the point, resize the window to 8x8 with anti-aliasing, normalize the feature descriptor, and flatten it to a 1x64 array. Below I have visualized 3 random 40x40 patches surrounding interest points.</p>
+                <h4>40x40 Patches</h4>
+                <div class="image-grid">
+                    <img src="media/patch1.png" alt="" style="width: 400px;">
+                    <img src="media/patch2.png" alt="" style="width: 400px;">
+                    <img src="media/patch3.png" alt="" style="width: 400px;">
+                </div>
+            </div> 
+        </section> 
+        <section>
+            <h1>Part 9: Feature Matching</h1>
+        
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 9, I compare every feature descriptor in img1 to every feature descriptor in img2 using the sum of squared distances (SSD) metric. I keep track of the pairs with the lowest and second lowest SSD error to compute ratio of dist1 / dist2. Using Lowe's technique, I reject any pairs where this ratio exceeds 0.65, which enforces the principle that the nearest neighbor must be significantly better than the second nearest neighbor.</p>
+                <h4>Interest Points Selected by Feature Matching</h4>
+                <div class="image-grid">
+                    <img src="media/corners_feature_match.png" alt="" style="width: 1000px;">
+                </div>
+                <p>There are noticeably fewer than 500 points with many clear correspondences, but some outliers still remain.</p>
+            </div> 
+        </section> 
+        <section>
+            <h1>Part 10: Random Sample Consensus (RANSAC)</h1>
+        
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 10, I use the RANSAC algorithm to robustly estimate the homography matrix between two images. I repeatedly samples four point matches 10,000 times to compute candidate homographies, keep the one with the most inliers (matches that fit well within a threshold), and finally recalculate the best homography using all inliers from that best model.</p>
+                <h4>Interest Points Remaining After RANSAC</h4>
+                <div class="image-grid">
+                    <img src="media/corners_ransac.png" alt="" style="width: 1000px;">
+                </div>
+                <p>I use the final remaining interest points to compute a homography H which is used to to create a mosaic just like in part (a) of this project.</p>
+                <h4>Manual-correspondence Mosaic (left), Automatic-correspondence Mosaic (right)</h4>
+                <div class="image-grid">
+                    <img src="media/room_mosaic.png" alt="" style="width: 500px;">
+                    <img src="media/room_mosaic_automatic.png" alt="" style="width: 500px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/car_mosaic.png" alt="" style="width: 500px;">
+                    <img src="media/car_mosaic_automatic.png" alt="" style="width: 500px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/living_mosaic.png" alt="" style="width: 500px;">
+                    <img src="media/living_mosaic_automatic.png" alt="" style="width: 500px;">
+                </div>
+            </div> 
+        </section> 
+        <section>
+            <h1>Bells & Whistles</h1>
+        
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>For bells and whistles, I added <b>multiscale processing for corner detection and feature description</b>. Below I have visualized the different components with multiscale processing.</p>
+                <h4>Interest Points After ANMS</h4>
+                <div class="image-grid">
+                    <img src="media/left_corners_multiscale.png" alt="" style="width: 600px;">
+                    <img src="media/right_corners_multiscale.png" alt="" style="width: 600px;">
+                </div>
+                <h4>40x40 Patches</h4>
+                <div class="image-grid">
+                    <img src="media/patch1_multiscale.png" alt="" style="width: 400px;">
+                    <img src="media/patch2_multiscale.png" alt="" style="width: 400px;">
+                    <img src="media/patch3_multiscale.png" alt="" style="width: 400px;">
+                </div>
+                <h4>Multiscale Automatic Mosaics</h4>
+                <div class="image-grid">
+                    <img src="media/room_mosaic_auto_multiscale.png" alt="" style="width: 500px;">
+                    <img src="media/car_mosaic_auto_multiscale.png" alt="" style="width: 500px;">
+                    <img src="media/living_mosaic_auto_multiscale.png" alt="" style="width: 500px;">
+                </div>
+            </div> 
+        </section> 
 </body>
 </html>
