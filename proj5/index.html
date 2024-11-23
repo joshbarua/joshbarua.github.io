@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS180 Project 5</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        section {
+            margin-bottom: 50px;
+        }
+
+        .subsection {
+            margin-bottom: 30px;
+        }
+
+        .subsection h3 {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+
+        .subsection p {
+            font-size: 18px;
+            text-align: left;
+        }
+
+        .image-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .image-grid img {
+            max-width: 100%;
+            width: 200px;
+            height: auto;
+        }
+
+        .image-grid img:nth-child(n+5) {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CS180 Project 5A: The Power of Diffusion Models!</h1>
+        
+        <!-- Overview Section -->
+        <section>
+            <h2>Josh Barua</h2>
+        </section>
+        
+        <!-- Section 1 -->
+        <section>
+            <h1>Part 0: Setup</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 0, I load the DeepFloyd IF diffusion model and generate 3 images from 3 prompts. The model generates images in two stages: the first stage produces images of size 64x64 and the second stage takes the outputs of the first stage and generates images of size 256x256. I use the <b>seed 1203</b> and will continue to do so for the rest of the project.</p>
+                <h4>3 generated images at 20 inference steps (stage 1 top, stage 2 bottom)</h4>
+                <div class="image-grid">
+                    <img src="media/stage_1_20steps.png" alt="Image 1" style="width: 600px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/stage_2_20steps.png" alt="Image 2" style="width: 600px;">
+                </div>
+                <p>The outputs are quite faithful to the prompts, and the generated images tend to be in a cartoonish style. Further, the generated images from stage 2 are both very sharp and smoothed out. I explored the influence of <code>num_inference_steps</code> parameter on the prompt "an oil painting of a snowy mountain village" which I have visualized below:</p>
+                <h4>2 inference steps (left), 200 inference steps (middle), 400 inference steps (right)</h4>
+                <div class="image-grid">
+                    <img src="media/stage_1_2steps.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/stage_1_200steps.png" alt="Image 2" style="width: 300px;">
+                    <img src="media/stage_1_400steps.png" alt="Image 2" style="width: 300px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/stage_2_2steps.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/stage_2_200steps.png" alt="Image 2" style="width: 300px;">
+                    <img src="media/stage_2_400steps.png" alt="Image 2" style="width: 300px;">
+                </div>
+                <p>With very few inference steps the image still resembles noise. As I increase the number of inference steps the image continues to be denoised until it hits a "sweet spot". However, as I increase the number of inference steps beyond this sweet spot, the generated image starts over-smoothing and artifacts begin to appear.</p>
+            </div>
+        </section>
+        <section>
+            <h1>Part 1.1: Implementing the Forward Process</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>Part 1.1 required me to implement the forward process of diffusion, which progressively adds more and more noise to the image. Below I have visualized some samples of the forward process:</p>
+                <div class="image-grid">
+                    <img src="media/noisy_campanile_step0.png" alt="Image 1" style="width: 500px;">
+                    <img src="media/noisy_campanile_step250.png" alt="Image 1" style="width: 500px;">
+                    <img src="media/noisy_campanile_step500.png" alt="Image 1" style="width: 500px;">
+                    <img src="media/noisy_campanile_step750.png" alt="Image 1" style="width: 500px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 1.2: Classical Denoising</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>Part 1.2 required me to use classical techniques like Gaussian blur filtering to remove the noise added by the forward process. Below I have visualized the results using a sigma value of 3 and a kernel size of 5x5:</p>
+                <div class="image-grid">
+                    <img src="media/classic_denoise_campanile.png" alt="Image 1" style="width: 1000px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 1.3: One-Step Denoising</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1.3, I use a pretrained UNet model to denoise the images. We solve for x_0 from x_t which effectively recover the noise added between x_0 and x_t, and subtracts it all from x_t in one step.</p>
+                <div class="image-grid">
+                    <img src="media/campanile_1step_t=250_denoising.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/campanile_1step_t=500_denoising.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/campanile_1step_t=750_denoising.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <p>The one-step denoising method performs significantly better than the classical techniques, but we still see that as more noise is added the quality of the denoised image goes down.</p>
+            </div>
+        </section>
+        <section>
+            <h1>Part 1.4: Iterative Denoising</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1.4, I implemented an iterative denoising teachnique which more closely aligns with the design of diffusion models as opposed to one-step denoising. To speed up the process and save compute, I use strided timesteps (i.e., I start at step 990, and skip 30 steps each time). Below I have visualized the images at different intermediate steps in the denoising process:</p>
+                <div class="image-grid">
+                    <img src="media/campanile_iterative_denoising_steps.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <p>Now I visualize the results from the 3 different denoising approaches I have explored so far:</p>
+                <div class="image-grid">
+                    <img src="media/campanile_3denoising_methods.png" alt="Image 1" style="width: 1000px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 1.5: Diffusion Model Sampling</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1.5, I use the same iterative denoising function from above (except starting at timestep 0 with the image as pure noise). I use the prompt "a high quality photo" to see what type of images the model now generates. Below I have visualized the 5 generated images:</p>
+                <div class="image-grid">
+                    <img src="media/5_generated_images.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <p>The generated images are of decent quality but are quite blurry contrary to the prompt.</p>
+            </div>
+        </section>
+        <section>
+            <h1>Part 1.6: Classifer Free Guidance</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1.6, I use classifier free guidance (CFG) to improve the quality of the images. I compute both a conditional noise estimate and an unconditional one. When I set gamma to be 0, I use the unconditional noise estimate, and when gamma is 1, I use the conditional noise estimate. However, the image gets better when I set gamma to be greather than 1.</p>
+                <div class="image-grid">
+                    <img src="media/5_generated_images_with_cfg.png" alt="Image 1" style="width: 1000px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 1.7: Image-to-image Translation</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1.7, I now use the iterative denoise function with CFG to gradually generate images that become increasingly similar to our original image. As t increases, the image that is denoised gets closer and closer to our original image (i.e. less noise to begin with). Below I have visualized the results for 3 images:</p>
+                <h4>Campanile</h4>
+                <div class="image-grid">
+                    <img src="media/campanile_translation.jpg" alt="Image 1" style="width: 1400px;">
+                </div>
+                <h4>Samoyed</h4>
+                <div class="image-grid">
+                    <img src="media/samoyed_translation.jpg" alt="Image 1" style="width: 1400px;">
+                </div>
+                <h4>Prof. Malik</h4>
+                <div class="image-grid">
+                    <img src="media/malik_translation.jpg" alt="Image 1" style="width: 1400px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 1.7.1: Editing Hand-Drawn and Web Images</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1.7.1, I use the procedure above to take a nonrealistic image and project it onto the natural image manifold. For the hand-drawn images, I had difficulty using the provided code due to my local environment so I drew the images on my ipad and uploaded them instead. Below I have visualized three of these results:</p>
+                <h4>Pikachu Web Image</h4>
+                <div class="image-grid">
+                    <img src="media/pikachu_translation.png" alt="Image 1" style="width: 1400px;">
+                </div>
+                <h4>Hand-Drawn Tree</h4>
+                <div class="image-grid">
+                    <img src="media/tree_translation.jpg" alt="Image 1" style="width: 1400px;">
+                </div>
+                <h4>Hand-Drawn Sun</h4>
+                <div class="image-grid">
+                    <img src="media/sun_translation.jpg" alt="Image 1" style="width: 1400px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 1.7.2: Inpainting</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1.7.2, I used the iterative denoising with CFG function to perform inpainting. I define a binary mask that is 0 where I want the original image and 1 where I want to fill with the new generated image. Below I have visualized three results:</p>
+                <h4>Campanile Inpainted</h4>
+                <div class="image-grid">
+                    <img src="media/campanile_inpainted.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <h4>Sun Inpainted</h4>
+                <div class="image-grid">
+                    <img src="media/sun_inpainted.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <h4>Prof. Malik Inpainted</h4>
+                <div class="image-grid">
+                    <img src="media/malik_inpainted.png" alt="Image 1" style="width: 1000px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 1.7.3: Text-Conditioned Image-to-image Translation</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1.7.3, instead of using the prompt "a high quality photo" to translate from the source image to a random image, I perform text-conditional image-to-image translation. As t decreases, I expect the generated images to be more similar to the original image and less similar to the prompt.</p>
+                <h4>Campanile w/ prompt "a rocket ship"</h4>
+                <div class="image-grid">
+                    <img src="media/campanile_prompted_translation.jpg" alt="Image 1" style="width: 1400px;">
+                </div>
+                <h4>Samoyed w/ prompt "a photo of a dog"</h4>
+                <div class="image-grid">
+                    <img src="media/samoyed_prompted_translation.jpg" alt="Image 1" style="width: 1400px;">
+                </div>
+                <h4>Sun w/ prompt "an oil painting of a snowy mountain village"</h4>
+                <div class="image-grid">
+                    <img src="media/sun_prompted_translation.jpg" alt="Image 1" style="width: 1400px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 1.8: Visual Anagrams</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1.8, I generate visual anagrams by averaging noise estimates between two prompts. The expected output is that when I flip the image, you should see the second prompt. Below I have visualized the results for 3 anagrams:</p>
+                <h4>Prompt 1 (left), Prompt 2 (right) -- the "(flipped)" was not in the prompt </h4>
+                <div class="image-grid">
+                    <img src="media/old_man_anagram.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/tiger_anagram.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/mountain_anagram.png" alt="Image 1" style="width: 1000px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 1.9: Hybrid Images</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1.9, I generate hybrid images, which are images with a high frequency component (visible from close up) and a low frequency component (visible from far away). I achieve this by applying high-pass and low-pass filters to the noise estimates of the two prompts.</p>
+                <div class="image-grid">
+                    <img src="media/hybrid_skull_waterfall.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/hybrid_mountain_dog.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/hybrid_panda_flower.png" alt="Image 1" style="width: 1000px;">
+                </div>
+            </div>
+        </section>
+        <h1>CS180 Project 5B: Diffusion Models from Scratch!</h1>
+        <section>
+            <h1>Part 1.1: Implementing the UNet</h1>
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1.1, I implement the UNet architecture:</p>
+                <div class="image-grid">
+                    <img src="media/unet_architecture.png" alt="Image 1" style="width: 1000px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 1.2: Using the UNet to Train a Denoiser</h1>
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1.2, I use the UNet to train a denoiser. I first pass in training pairs (z, x), where z is the noisy MNIST image, and x is the clean MNIST image. For each clean image x, we can add noise controlled by sigma to get z. Below I have visualized the process of adding noise with varying sigma:</p>
+                <div class="image-grid">
+                    <img src="media/mnist_levels_of_noise.png" alt="Image 1" style="width: 1000px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 1.2.1: Training</h1>
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1.2.1, I train the model according to the following hyperparameters: batch size of 256, 5 epochs of training, Adam with learning rate of 1e-4, number of hidden dimensions = 128, sigma = 0.5</p>
+                <h4>Loss Curve</h4>
+                <div class="image-grid">
+                    <img src="media/unet_loss_curve.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <h4>Results after 1 epoch</h4>
+                <div class="image-grid">
+                    <img src="media/mnist_epoch1.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <h4>Results after 5 epoch</h4>
+                <div class="image-grid">
+                    <img src="media/mnist_epoch5.png" alt="Image 1" style="width: 1000px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 1.2.2: Out-of-Distribution Testing</h1>
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1.2.2, I use different sigma values than the model was trained on to test whether the model can generalize:</p>
+                <div class="image-grid">
+                    <img src="media/ood_mnist.png" alt="Image 1" style="width: 1000px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 2.1: Adding Time Conditioning to UNet</h1>
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 2.1, I modify the original architecture by adding time conditioning:</p>
+                <div class="image-grid">
+                    <img src="media/conditioned_unet_architecture.png" alt="Image 1" style="width: 1000px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 2.2: Training</h1>
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 2.2, I train the model according to the following hyperparameters: batch size of 128, 20 epochs of training, Adam with learning rate of 1e-3 and exponential learning rate decay scheduler with gamma=0.1^(1.0/num_epochs), number of hidden dimensions = 64:</p>
+                <div class="image-grid">
+                    <img src="media/time_conditioned_loss_curve.png" alt="Image 1" style="width: 1000px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 2.3: Sampling from the UNet</h1>
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 2.3, I implement the sampling algorithm to test how well the UNet is able to generate new samples. Below I have visualized the results at different checkpoints:</p>
+                <div class="image-grid">
+                    <img src="media/generated_samples_checkpoint5.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/generated_samples_checkpoint20.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <p>The model does a decent job at generating new samples, but it appears that it hasn't learned different digits just yet. Thus, in the next section I will also condition on the class of each digit to make this as robust as possible.</p>
+            </div>
+        </section>
+        <section>
+            <h1>Part 2.4: Adding Class-Conditioning to UNet</h1>
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 2.4, I add information about the class of the digit I want the model to generate to improve its output. I still want the model to be capable of generation without the class condition, so I add a dropout rate of 0.1 where I set the condition vector to zero. Below I have visualized the loss curve from training:</p>
+                <div class="image-grid">
+                    <img src="media/class_conditioned_loss_curve.png" alt="Image 1" style="width: 1000px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 2.5: Sampling from the Class-Conditioned UNet</h1>
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 2.5, I sample from the model using the same process, but this time I add a class condition. I also incorporate classifier-free guidance from part A since that experiment taught us that models struggle to generate good outputs when conditioned without CFG.</p>
+                <div class="image-grid">
+                    <img src="media/generated_samples_class_conditioned_checkpoint5.png" alt="Image 1" style="width: 1000px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/generated_samples_class_conditioned_checkpoint20.png" alt="Image 1" style="width: 1000px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Conclusion</h1>
+        
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>I learned a lot from this project and it was super interesting seeing how we could achieve the same kinds of cool images (e.g. hybrid images) using both classical image processing techniques and stable diffusion! The components of the project on UNet also gave me a better intuition for why we upsample and downsample images to capture a diverse range of representations, from fine to coarse features.</p>
+        </section> 
+</body>
+</html>
