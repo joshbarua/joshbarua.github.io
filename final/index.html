@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS180 Final Project</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        section {
+            margin-bottom: 50px;
+        }
+
+        .subsection {
+            margin-bottom: 30px;
+        }
+
+        .subsection h3 {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+
+        .subsection p {
+            font-size: 18px;
+            text-align: left;
+        }
+
+        .image-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .image-grid img {
+            max-width: 100%;
+            width: 200px;
+            height: auto;
+        }
+
+        .image-grid img:nth-child(n+5) {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section>
+            <h1>Josh Barua</h1>
+        </section>
+
+        <h1>CS180 Final Project 1: Gradient Domain Fusion</h1>
+
+        <div class="subsection">
+            <p>I present my results on the pre-canned project gradient domain fusion. I used Python starter code found at this website: https://yxw.cs.illinois.edu/course/CS445/Content/projects/gradient/ComputationalPhotography_ProjectGradient.html. This project taught me how its very important to carefully consider the objective we optimize for (i.e., is it something humans care about) and how it could impact the structure of the image.</p>
+        </div>
+        
+        <!-- Section 1 -->
+        <section>
+            <h1>Part 1: Toy Problem</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1, I start by computing the x and y gradients from an image s, then use all the gradients, plus one pixel intensity, to reconstruct an image v. To do this I set up 3 objectives:</p>
+                <p>1. minimize ( v(x+1,y)-v(x,y) - (s(x+1,y)-s(x,y)) )^2</p>
+                <p>2. minimize ( v(x,y+1)-v(x,y) - (s(x,y+1)-s(x,y)) )^2</p>
+                <p>3. minimize (v(1,1)-s(1,1))^2</p>
+                <p>I set up each of the constraints in a sparse matrix A and the known vector b, and then used least squares to solve. Below I visualize the result (with a max error of 0.001):</p>
+                <div class="image-grid">
+                    <img src="media/toy_problem.png" alt="Image 1" style="width: 600px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 2: Poisson Blending</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 2, I implement poisson blending. The process begins by cropping the source image and selecting a mask region in the target image where the source will be inserted. Below, I visualize the results of "copying" the penguin chick into the image of two hikers:</p>
+                <div class="image-grid">
+                    <img src="media/im2.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/penguin_chick.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/penguin_chick_im2_overlay.png" alt="Image 1" style="width: 300px;">
+                </div>
+                <p>For poisson blending, the goal is to solve the blending constraints by minimizing two terms. The first term applies to each pixel i in the source image and its neighbors j within the source. It minimizes the squared difference between the gradients of i and j in the source and the target intensity values. The second term handles pixels i in the source and their neighbors j outside the source, minimizing the squared difference between the intensity of i in the source and j in the target, adjusted for gradient continuity. Below, I visualize the results on 3 sets of images:</p>
+                <h4>Direct overlay (left), Poisson blending (right)</h4>
+                <div class="image-grid">
+                    <img src="media/penguin_chick_im2_overlay.png" alt="Image 1" style="width: 500px;">
+                    <img src="media/penguin_chick_im2_poisson.png" alt="Image 1" style="width: 500px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/penguin_im3_overlay.png" alt="Image 1" style="width: 500px;">
+                    <img src="media/penguin_im3_poisson.png" alt="Image 1" style="width: 500px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/youtube_im3_overlay.png" alt="Image 1" style="width: 500px;">
+                    <img src="media/youtube_im3_poisson.png" alt="Image 1" style="width: 500px;">
+                </div>
+                <p>We can clearly see how poisson blending helps blend the background of the object in the source region and the surrounding area of the target region. However, in areas where there is a sharp difference in gradient magnitude (e.g., the white border between youtube logo and the rest of the image) a seam is still visible. In the next part, I show how mixed gradients can help solve this problem.</p>
+            </div>
+        </section>
+        <section>
+            <h1>Bells & Whistles: Mixed Gradients</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>For the bells and whistles feature, I implemented mixed gradients. This process is similar to poisson blending, with one key difference: when adding the gradient differences at each step, instead of using only the source gradient, I take the maximum of the absolute values of the gradients from the source and the target. This combined gradient is then added, resulting in a more nuanced blending effect. Below, I visualize the results compared to poisson blending:</p>
+                <h4>Poisson blending (left), Mixed gradients (right)</h4>
+                <div class="image-grid">
+                    <img src="media/penguin_chick_im2_poisson.png" alt="Image 1" style="width: 500px;">
+                    <img src="media/penguin_chick_im2_mixed.png" alt="Image 1" style="width: 500px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/penguin_im3_poisson.png" alt="Image 1" style="width: 500px;">
+                    <img src="media/penguin_im3_mixed.png" alt="Image 1" style="width: 500px;">
+                </div>
+                <div class="image-grid">
+                    <img src="media/youtube_im3_poisson.png" alt="Image 1" style="width: 500px;">
+                    <img src="media/youtube_im3_mixed.png" alt="Image 1" style="width: 500px;">
+                </div>
+                <p>Mixed gradients clearly help mitigate the problem with the blurry background and removes the seams where there were strong edges.</p>
+            </div>
+        </section>
+    </div>
+    <div class="container">
+        <h1>CS180 Final Project 2: Light Field Camera</h1>
+
+        <div class="subsection">
+        <p>I present my results on the pre-canned project light field cameras. In this project I learned we can use multiple images captured over a plane to create image editing effects like depth refocusing and aperture adjustment.</p>
+        </div>
+        
+        <!-- Section 1 -->
+        <section>
+            <h1>Part 1: Depth Refocusing</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 1, I implemented depth refocusing. I start by processing the 289 images from the Stanford Light Field Archive by extracting the (x,y) position for each image. Using these coordinates, I can shift and average all the images to achieve a refocusing effect. With no shifting (C = 0), the focus is on the far-away objects because objects which are far away from the camera do not vary their position significantly when the camera moves. I set the center image to be at position (8, 8) and shift each of the other images to be aligned with this center image multiplied by a shifting factor C. By increasing C, I can alter the depth so that the closer objects come into focus. The results are shown below:</p>
+                <h4>C = 0.0 (left), C = 0.8 (middle), C = 2.0 (right)</h4>
+                <div class="image-grid">
+                    <img src="media/refocused_depth_0.00.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/refocused_depth_0.80.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/refocused_depth_2.00.png" alt="Image 1" style="width: 300px;">
+                </div>
+                <p>Below, I present a gif showing the transition from C = -0.4 to 2.0 with a step size of 0.2:</p>
+                <div class="image-grid">
+                    <img src="media/refocused.gif" alt="Image 1" style="width: 800px;">
+                </div>
+            </div>
+        </section>
+        <section>
+            <h1>Part 2: Aperture Adjustment</h1>
+
+            <!-- Subsection 1.1 -->
+            <div class="subsection">
+                <p>In part 2, I implemented aperture adjustment. To adjust the aperture, I use a similar process as depth refocusing, except I only average a subset of the images given. For example, using only the center (8, 8) image with aperture = 0 would yield a clear image (similar to a pinhole camera). As I increase the aperture, I am using more images, causing a smaller range of the photo to appear in focus. That is, if I set the aperture to 3, then I use all the images within 3 coordinates of the center (8, 8). Below, I visualize my results:</p>
+                <h4>Aperture = 0 (left), Aperture = 7 (middle), Aperture = 14 (right)</h4>
+                <div class="image-grid">
+                    <img src="media/aperture_0.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/aperture_7.png" alt="Image 1" style="width: 300px;">
+                    <img src="media/aperture_14.png" alt="Image 1" style="width: 300px;">
+                </div>
+                <p>Below, I present a gif showing the transition in aperture from 0 to 14 pixels with a step size of 1:</p>
+                <div class="image-grid">
+                    <img src="media/aperture.gif" alt="Image 1" style="width: 800px;">
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
