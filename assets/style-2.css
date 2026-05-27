@@ -90,6 +90,15 @@ a:hover {
     color: #111;
 }
 
+a.papertitle {
+    text-decoration: none;
+}
+
+a.papertitle:hover {
+    color: var(--cardinal-red);
+    text-decoration: underline;
+}
+
 .thisauthor {
     color: #111;
     text-decoration: underline;
