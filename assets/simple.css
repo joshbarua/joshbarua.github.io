@@ -1,0 +1,84 @@
+/* A quiet personal page with small Pokémon details. */
+:root { color-scheme: light; --ink: #303f42; --muted: #65736c; --link: #426a56; --paper: #fafbf5; }
+* { box-sizing: border-box; }
+html { scroll-padding-top: 24px; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.75 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+a { color: var(--link); text-underline-offset: 3px; }
+a:hover { color: #856225; }
+a:focus-visible, [tabindex]:focus-visible { outline: 2px solid #947022; outline-offset: 4px; }
+.site { max-width: 728px; margin: 56px auto 32px; padding: 0 26px; }
+h1, .site-name { font: 400 34px/1.2 Georgia, serif; margin: 0 0 12px; letter-spacing: -.8px; }
+.site-name { display: inline-block; color: var(--ink); text-decoration: none; }
+.name-dot { color: #a76a56; }
+.main-nav { display: flex; flex-wrap: wrap; gap: 12px; font: 13px/1.7 'Courier New', monospace; }
+.main-nav a { text-decoration: none; }
+.main-nav a[aria-current] { text-decoration: underline; text-decoration-color: #b8c5ac; }
+.main-nav span { color: #abb4a8; }
+.profile { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 28px; align-items: start; margin: 32px 0; }
+.profilepic { display: block; width: 140px; max-width: 100%; height: auto; border-radius: 3px; }
+.profile-copy { min-width: 0; }
+.profile-contact { margin-top: 18px; }
+.profile-email { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+.external-links { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 8px 0 20px; }
+.menulink { font-size: 13px; }
+p { margin: 0 0 18px; }
+.intro-panel p { margin-bottom: 0; }
+.header { font: 400 22px/1.4 Georgia, serif; margin: 34px 0 18px; }
+.header::before { content: ''; display: inline-block; background: url('pokeball.svg') center / contain no-repeat; width: 14px; height: 14px; margin-right: 10px; vertical-align: 0; }
+.news-container { max-height: 200px; overflow-y: auto; scrollbar-color: #91a28e #eff2e8; border-left: 2px solid #c5cebb; padding: 0 16px; }
+.news-item { font-size: 14px; padding: 8px 0; }
+.news-item:first-child { padding-top: 0; }
+.news-date { font: 12px/1.7 'Courier New', monospace; color: var(--muted); white-space: nowrap; margin-right: 6px; }
+.paper { font-size: 13px; line-height: 1.7; color: var(--muted); margin: 0 0 22px; }
+.papertitle { font-size: 15px; font-weight: 500; text-decoration: none; }
+.thisauthor { color: var(--ink); }
+.conf { font-style: italic; }
+.tag { font: 12px/1.7 'Courier New', monospace; }
+.section-link { font-size: 13px; margin: 14px 0 0; }
+.research-quote { margin: 16px 0 16px auto; max-width: 300px; color: var(--muted); text-align: right; }
+.research-quote blockquote { margin: 0; font: italic 13px/1.6 Georgia, serif; }
+.research-quote p { margin: 0; }
+.research-quote figcaption { margin-top: 3px; font-size: 11px; }
+.section-link a, .back-home { text-decoration: none; }
+.section-link a:hover, .back-home:hover { text-decoration: underline; }
+.inner-page { margin-top: 36px; }
+.page-title { font-size: 28px; }
+.back-home { display: inline-block; font-size: 13px; margin-bottom: 18px; }
+footer { border-top: 1px solid #dce1d4; margin-top: 32px; padding-top: 24px; }
+footer .section-link { margin: 0 0 20px; }
+.personal-note { font-size: 14px; }
+.companion { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 12px; }
+.companion img { width: 56px; height: 56px; object-fit: contain; image-rendering: pixelated; }
+.last-updated { font-size: 11px; color: var(--muted); text-align: right; margin: 16px 0 0; }
+.skip-link { position: absolute; top: -80px; left: 16px; background: var(--paper); padding: 8px 12px; }
+.skip-link:focus { top: 8px; }
+@media (max-width: 480px) {
+  .site { margin-top: 30px; padding: 0 22px; }
+  .profile { grid-template-columns: 104px minmax(0, 1fr); gap: 20px; }
+  .profilepic { width: 104px; }
+  .external-links { gap: 4px 12px; margin-bottom: 14px; }
+  .main-nav { gap: 9px; }
+}
+@media (max-width: 380px) {
+  .profile { grid-template-columns: 1fr; gap: 18px; }
+}
+@media print { .news-container { max-height: none; overflow: visible; } .skip-link { display: none; } }
+
+.publication-list { list-style: none; padding: 0; margin: 28px 0 0; }
+.publication-list > li { margin-bottom: 26px; }
+
+.journal { margin-top: 48px; }
+.journal-entry + .journal-entry { margin-top: 36px; padding-top: 36px; border-top: 1px solid #dce1d4; }
+.journal-entry .header { margin-top: 0; }
+.journal-photos { display: flex; align-items: flex-start; gap: 12px; }
+.journal-photos > div { display: block; flex: var(--photo-ratio, 1) 1 0; min-width: 0; }
+.journal-photos img { display: block; width: 100%; height: auto; border-radius: 3px; }
+.journal-blurb { margin-top: 14px; font-size: 14px; }
+.journal-blurb > :last-child { margin-bottom: 0; }
+.journal-blurb:empty { display: none; }
+@media (max-width: 480px) {
+  .journal { margin-top: 36px; }
+  .journal-entry + .journal-entry { margin-top: 28px; padding-top: 28px; }
+  .journal-photos { flex-direction: column; gap: 12px; }
+  .journal-photos > div { flex: none; width: 100%; }
+}
